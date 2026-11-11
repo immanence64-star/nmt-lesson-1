@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Розбір ДЗ: Подібність та Бісектриса</title>
+
+<!-- Підключення KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+
+<style>
+  /* СВІТЛА ТЕМА */
+  :root {
+    --bg-color: #f0f2f5; --paper-color: #ffffff; --grid-color: #dcedf7;
+    --margin-line: #ff6b6b; --primary-blue: #3498db; --text-main: #2c3e50;
+    --text-muted: #7f8c8d; --card-bg: rgba(255, 255, 255, 0.95);
+    --card-border: #ecf0f1; --svg-bg: #ffffff;
+    --correct-green: #2ecc71; --accent-red: #e74c3c;
+    --accent-purple: #9b59b6; --accent-yellow: #f1c40f;
+    --hl-bg-yellow: rgba(241, 196, 15, 0.3); --hl-bg-blue: rgba(52, 152, 219, 0.2);
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* ТЕМНА ТЕМА */
+  body.dark-theme {
+    --bg-color: #121212; --paper-color: #1e1e1e; --grid-color: #2c2c2c;
+    --margin-line: #c0392b; --primary-blue: #2980b9; --text-main: #e0e0e0;
+    --text-muted: #aaaaaa; --card-bg: rgba(40, 40, 40, 0.95);
+    --card-border: #333333; --svg-bg: #252525;
+    --correct-green: #27ae60; --accent-red: #ff5252;
+    --accent-purple: #b39ddb; --accent-yellow: #ffd54f;
+    --hl-bg-yellow: rgba(241, 196, 15, 0.15); --hl-bg-blue: rgba(52, 152, 219, 0.15);
+  }
+
+  body {
+    margin: 0; padding: 0; background-color: var(--bg-color); font-family: var(--font-ui);
+    color: var(--text-main); line-height: 1.6; transition: 0.3s;
+  }
+
+  .theme-toggle {
+    position: absolute; top: 15px; right: 20px; z-index: 10000;
+    background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main);
+    border-radius: 20px; padding: 5px 12px; cursor: pointer; font-size: 16px; outline: none;
+  }
+
+  .container {
+    max-width: 1000px; margin: 30px auto; background-color: var(--paper-color);
+    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden;
+    position: relative; padding: 40px 40px 40px 80px;
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .container::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: 60px;
+    width: 2px; background-color: var(--margin-line); z-index: 0;
+  }
+
+  .back-link {
+    display: inline-block; padding: 10px 20px; background: var(--primary-blue);
+    color: white; text-decoration: none; border-radius: 30px; font-weight: bold;
+    margin-bottom: 20px; box-shadow: 0 4px 10px rgba(52,152,219,0.3); transition: 0.3s;
+  }
+  .back-link:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(52,152,219,0.4); }
+
+  h1 { color: var(--correct-green); text-align: center; margin-top: 10px; font-size: 2em; }
+
+  .ans-key {
+    background: var(--card-bg); padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.1em;
+    margin-bottom: 40px; text-align: center; border: 2px dashed var(--correct-green);
+  }
+
+  .hw-expl-card {
+    background: var(--card-bg); border-radius: 10px; padding: 25px; margin-bottom: 30px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05); border: 1px solid var(--card-border);
+  }
+  .hw-condition {
+    background: rgba(0,0,0,0.03); padding: 15px; border-radius: 6px; font-style: italic; 
+    margin-bottom: 20px; border-left: 4px solid var(--text-muted);
+  }
+  
+  .solution-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 30px; }
+  .hw-steps { padding-left: 10px; }
+  .step-why { font-size: 0.9em; color: var(--text-muted); font-style: italic; background: rgba(0,0,0,0.03); padding: 5px 10px; border-radius: 4px; border-left: 3px solid var(--accent-yellow); margin-top: 8px; margin-bottom: 15px;}
+
+  .svg-box { background: var(--svg-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--card-border); width: 100%; }
+  svg { width: 100%; height: auto; }
+
+  .hl-blue { color: var(--primary-blue); font-weight: bold; }
+  .hl-red { color: var(--accent-red); font-weight: bold; }
+  .hl-green { color: var(--correct-green); font-weight: bold; }
+  .hl-purple { color: var(--accent-purple); font-weight: bold; }
+  .hl-bg-yellow { background-color: var(--hl-bg-yellow); padding: 0 4px; border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .container { padding: 60px 20px 30px 30px; }
+    .container::before { left: 15px; }
+    .solution-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  
+  <!-- Кнопка повернення на головну сторінку -->
+  <a href="index.html" class="back-link">⬅ Повернутися до конспекту</a>
+
+  <h1>✅ Детальний розбір ДЗ</h1>
+  
+  <div class="ans-key">
+    <span style="color: var(--text-muted);">Бланк правильних відповідей:</span><br>
+    1-В, 2-Б, 3-А, 4-Д, 5-Д, 6-Б, 7(Г, А, В), 8(Б, А, Д), 9(&minus;16)
+  </div>
+
+  <!-- Картка 1 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 1.</strong> Обчисліть $\frac{1}{3} \cdot 5{,}8 + \frac{1}{3} \cdot 8{,}3$
+    </div>
+    <div class="hw-steps">
+      <p>Щоб не рахувати десяткові дроби окремо і не зводити до спільного знаменника, застосуємо розподільний закон — винесемо спільний множник за дужки:</p>
+      <p>$\textcolor{#3498db}{\frac{1}{3}} \cdot (\textcolor{#9b59b6}{5{,}8 + 8{,}3}) = \textcolor{#3498db}{\frac{1}{3}} \cdot \textcolor{#9b59b6}{14{,}1}$</p>
+      <p>Тепер виконуємо скорочення (фактично ділимо $14{,}1$ на $3$):</p>
+      <p>$\frac{\cancel{14{,}1}^{\textcolor{#e74c3c}{4{,}7}}}{\cancel{3}_{\textcolor{#e74c3c}{1}}} = \textcolor{#2ecc71}{4{,}7}$</p>
+      <div class="step-why"><strong>Порада:</strong> Завжди шукай, що можна винести за дужки. Укладачі НМТ спеціально дають такі числа, які в сумі утворюють «зручне» число (тут 14,1 ідеально ділиться на 3).</div>
+    </div>
+  </div>
+
+  <!-- Картка 2 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 2.</strong> Знайдіть точку, симетричну точці $A(2; -3; 7)$ відносно координатної площини $yz$.
+    </div>
+    <div class="hw-steps">
+      <p><strong>Лайфхак:</strong> При симетрії відносно площини знак змінює та координата, <em>якої немає в назві площини</em>.</p>
+      <p>Площина $\textcolor{#3498db}{yz}$ (тут є букви $y$ та $z$, але немає букви $x$). Отже, змінюємо знак лише у першої координати ($x$):</p>
+      <p>$A(\textcolor{#e74c3c}{2}; -3; 7) \xrightarrow{\text{симетрія } yz} A'(\textcolor{#2ecc71}{-2}; -3; 7)$</p>
+    </div>
+  </div>
+
+  <!-- Картка 3 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 3.</strong> Розв'яжіть нерівність $0{,}7^{3x - 1} \textcolor{#e74c3c}{>} 0{,}49$.
+    </div>
+    <div class="hw-steps">
+      <p>Зведемо праву частину до основи лівої: $0{,}49 = \textcolor{#3498db}{0{,}7^2}$.</p>
+      <p>$0{,}7^{3x - 1} \textcolor{#e74c3c}{>} 0{,}7^2$</p>
+      <p><span class="hl-bg-yellow">🚨 ПАСТКА!</span> Оскільки основа $0{,}7$ менша за $1$, маємо справу зі <strong>спадною функцією</strong>. При відкиданні основ ми зобов'язані <strong>розвернути знак нерівності</strong>!</p>
+      <p>$3x - 1 \textcolor{#e74c3c}{<} 2 \Rightarrow 3x < 3 \Rightarrow \textcolor{#2ecc71}{x < 1}$.</p>
+      <p>У вигляді проміжку це записується як $(-\infty; 1)$.</p>
+    </div>
+  </div>
+
+  <!-- Картка 4 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 4.</strong> Різниця двох кутів, отриманих при перетині двох прямих (див. рисунок), дорівнює $120^\circ$. Визначте градусну міру кута $\alpha$.
+    </div>
+    <div class="solution-grid">
+      <div class="hw-steps">
+        <p>При перетині двох прямих утворюються кути двох типів: вертикальні (вони рівні) та суміжні (їх сума $\textcolor{#3498db}{180^\circ}$). Оскільки в умові сказано, що їх різниця $120^\circ$, це не можуть бути рівні (вертикальні) кути. Отже, мова йде про <strong>суміжні кути</strong>.</p>
+        <p>Нехай гострий кут дорівнює $\textcolor{#9b59b6}{\gamma}$. Тоді тупий кут $\alpha$ (суміжний з ним) дорівнює $\textcolor{#e74c3c}{180^\circ - \gamma}$.</p>
+        <p>За умовою їх різниця дорівнює $120^\circ$:<br>
+        $(\textcolor{#e74c3c}{180^\circ - \gamma}) - \textcolor{#9b59b6}{\gamma} = 120^\circ$<br>
+        $180^\circ - 2\gamma = 120^\circ \Rightarrow 2\gamma = 60^\circ \Rightarrow \textcolor{#9b59b6}{\gamma = 30^\circ}$ (це гострий кут).</p>
+        <p>Нас просили знайти тупий кут $\alpha$ (за малюнком):<br>
+        $\alpha = 180^\circ - 30^\circ = \textcolor{#2ecc71}{150^\circ}$.</p>
+      </div>
+      <div class="visual-col">
+        <div class="svg-box">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+            <line x1="20" y1="130" x2="180" y2="20" stroke="var(--text-main)" stroke-width="2"/>
+            <line x1="20" y1="20" x2="180" y2="130" stroke="var(--text-main)" stroke-width="2"/>
+            <path d="M 120 54 A 30 30 0 0 0 80 54" fill="none" stroke="var(--accent-red)" stroke-width="2"/>
+            <text x="95" y="45" font-size="14" fill="var(--accent-red)" font-family="var(--math-font)">&alpha;</text>
+            <path d="M 120 54 A 30 30 0 0 1 138 88" fill="none" stroke="var(--accent-purple)" stroke-width="2"/>
+            <text x="145" y="65" font-size="14" fill="var(--accent-purple)" font-family="var(--math-font)">&gamma;</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Картка 5 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 5.</strong> Знайдіть область визначення функції $y = \sqrt[4]{3 - x}$.
+    </div>
+    <div class="hw-steps">
+      <p>Оскільки ми маємо корінь <strong>парного</strong> степеня (4), підкореневий вираз не може бути від'ємним. Складаємо нерівність:</p>
+      <p>$3 - x \textcolor{#3498db}{\ge} 0$</p>
+      <p>Переносимо трійку: $-x \textcolor{#3498db}{\ge} -3$</p>
+      <p><span class="hl-bg-yellow">Увага!</span> При множенні (або діленні) обох частин нерівності на від'ємне число (на $-1$), знак нерівності змінюється на протилежний:</p>
+      <p>$x \textcolor{#e74c3c}{\le} 3$</p>
+      <p>У вигляді проміжку: $\textcolor{#2ecc71}{(-\infty; 3]}$. (Квадратна дужка, бо нерівність нестрога).</p>
+    </div>
+  </div>
+
+  <!-- Картка 6 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 6.</strong> Знайдіть похідну функції $f(x) = \frac{x}{x^2+1}$.
+    </div>
+    <div class="hw-steps">
+      <p>Застосовуємо правило диференціювання частки: $\left(\frac{u}{v}\right)' = \frac{u'v - uv'}{v^2}$</p>
+      <p>$\textcolor{#9b59b6}{u = x \Rightarrow u' = 1}$<br>
+         $\textcolor{#3498db}{v = x^2+1 \Rightarrow v' = 2x}$</p>
+      <p>Підставляємо:<br>
+      $f'(x) = \frac{\textcolor{#9b59b6}{1}\textcolor{#3498db}{(x^2+1)} - \textcolor{#9b59b6}{x}\textcolor{#3498db}{(2x)}}{(x^2+1)^2} = \frac{x^2 + 1 - 2x^2}{(x^2+1)^2} = \textcolor{#2ecc71}{\frac{1 - x^2}{(x^2+1)^2}}$</p>
+    </div>
+  </div>
+
+  <!-- Картка 7 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 7.</strong> Установіть відповідність між виразом (1-3) та проміжком, якому він належить, якщо $a = 2{,}4$.
+    </div>
+    <div class="hw-steps">
+      <p>Просто підставляємо значення $a = 2{,}4$ у кожен вираз і рахуємо:</p>
+      <p>1) $\textcolor{#9b59b6}{2{,}4} + 4 = 6{,}4$. Це число лежить на проміжку $(6; 8) \Rightarrow$ <strong>Г</strong>.</p>
+      <p>2) $4 - \textcolor{#9b59b6}{2{,}4} = 1{,}6$. Це число лежить на проміжку $(0; 2) \Rightarrow$ <strong>А</strong>.</p>
+      <p>3) $2 \cdot \textcolor{#9b59b6}{2{,}4} - 2 = 4{,}8 - 2 = 2{,}8$. Це число лежить на проміжку $(2; 4) \Rightarrow$ <strong>В</strong>.</p>
+    </div>
+  </div>
+
+  <!-- Картка 8 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 8.</strong> До кожного початку речення доберіть його закінчення так, щоб утворилося правильне твердження про числа $32$ і $18$.
+    </div>
+    <div class="hw-steps">
+      <p>Обчислюємо і перевіряємо властивості кожного результату:</p>
+      <p>1) Сума: $32 + 18 = \mathbf{50}$. Оскільки число закінчується на нуль, воно ділиться націло на 10 $\Rightarrow$ <strong>Б</strong>.</p>
+      <p>2) Добуток: $32 \cdot 18$. Щоб не множити стовпчиком, розкладемо на множники:<br>
+      $32 = 2^5$, а $18 = 2 \cdot 9 = 2 \cdot 3^2$.<br>
+      $32 \cdot 18 = 2^5 \cdot (2 \cdot 3^2) = 2^6 \cdot 3^2 = (2^3 \cdot 3)^2 = \mathbf{24^2}$.<br>Отже, добуток є квадратом натурального числа $\Rightarrow$ <strong>А</strong>.</p>
+      <p>3) Різниця: $32 - 18 = \mathbf{14}$. Перевіряємо варіанти. Число 14 є дільником 84, оскільки $84 : 14 = 6$ $\Rightarrow$ <strong>Д</strong>.</p>
+    </div>
+  </div>
+
+  <!-- Картка 9 -->
+  <div class="hw-expl-card">
+    <div class="hw-condition">
+      <strong>Завдання 9.</strong> Знайдіть найменше значення функції $y = x^3 - 12x$ на відрізку $\textcolor{#f1c40f}{[0; 3]}$.
+    </div>
+    <div class="solution-grid">
+      <div class="hw-steps">
+        <p><strong>Крок 1.</strong> Шукаємо похідну:<br> $\textcolor{#3498db}{y' = 3x^2 - 12}$.</p>
+        <p><strong>Крок 2.</strong> Прирівнюємо похідну до нуля (шукаємо критичні точки):<br> 
+        $3x^2 - 12 = 0 \Rightarrow 3x^2 = 12 \Rightarrow x^2 = 4$<br>
+        Маємо два корені: $x_1 = 2$ та $x_2 = -2$. <br>
+        Нашому відрізку $[0; 3]$ належить лише $\textcolor{#9b59b6}{x = 2}$. Іншу точку відкидаємо.</p>
+        <p><strong>Крок 3.</strong> Обчислюємо значення функції (саме початкової функції $y$, а не похідної!) на кінцях відрізка та в критичній точці:<br>
+        $y(\textcolor{#9b59b6}{0}) = 0^3 - 12(0) = 0$<br>
+        $y(\textcolor{#9b59b6}{3}) = 3^3 - 12(3) = 27 - 36 = -9$<br>
+        <span class="hl-bg-blue">$y(\textcolor{#9b59b6}{2}) = 2^3 - 12(2) = 8 - 24 = \mathbf{\textcolor{#e74c3c}{-16}}$</span></p>
+        <p>Серед чисел $0$, $-9$ та $-16$ найменшим є $\textcolor{#2ecc71}{-16}$.</p>
+      </div>
+      <div class="visual-col">
+        <div class="svg-box" style="margin:0;">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+            <line x1="20" y1="40" x2="20" y2="130" stroke="var(--text-main)" stroke-width="1.5"/>
+            <line x1="10" y1="50" x2="190" y2="50" stroke="var(--text-main)" stroke-width="1.5"/>
+            <path d="M 20 50 Q 80 180 140 50" fill="none" stroke="var(--correct-green)" stroke-width="2.5"/>
+            <line x1="20" y1="50" x2="160" y2="50" stroke="var(--accent-yellow)" stroke-width="5" opacity="0.6"/>
+            <circle cx="105" cy="115" r="5" fill="var(--accent-red)"/>
+            <line x1="105" y1="50" x2="105" y2="115" stroke="var(--accent-red)" stroke-dasharray="3"/>
+            <text x="115" y="110" font-size="12" fill="var(--accent-red)" font-weight="bold">min (-16)</text>
+            <text x="25" y="45" font-size="10" fill="var(--text-main)">0</text>
+            <text x="100" y="45" font-size="10" fill="var(--text-main)">2</text>
+            <text x="155" y="45" font-size="10" fill="var(--text-main)">3</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Скрипти -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+<script>
+  window.toggleTheme = function() {
+    var body = document.body;
+    var btn = document.getElementById('themeToggle');
+    if (body.classList.contains('dark-theme')) {
+      body.classList.remove('dark-theme');
+      btn.innerHTML = '🌙';
+      localStorage.setItem('theme', 'light');
+    } else {
+      body.classList.add('dark-theme');
+      btn.innerHTML = '☀️';
+      localStorage.setItem('theme', 'dark');
+    }
+  };
+
+  function renderFormulas() {
+    if (window.renderMathInElement && !window.mathRendered) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+      });
+      window.mathRendered = true;
+    }
+  }
+
+  // Відновлення теми
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-theme');
+    document.getElementById('themeToggle').innerHTML = '☀️';
+  }
+
+  // Запуск KaTeX
+  document.addEventListener("DOMContentLoaded", renderFormulas);
+  window.addEventListener("load", renderFormulas);
+  setTimeout(renderFormulas, 300);
+  setTimeout(renderFormulas, 1000);
+</script>
+</body>
+</html>
