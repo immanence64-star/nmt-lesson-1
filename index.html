@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Опорний конспект: Подібність та Бісектриса</title>
 
-<!-- Тільки CSS залишаємо в head -->
+<!-- Тільки CSS KaTeX залишаємо в head -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
 
 <style>
@@ -72,6 +72,8 @@
     -webkit-appearance: none; appearance: none; touch-action: manipulation;
   }
   .tab-btn.active { background: var(--tab-active-bg); color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); }
+  .tab-btn.hw-tab { color: #e67e22; }
+  .tab-btn.hw-tab.active { color: #e67e22; border-bottom: 3px solid #e67e22; }
 
   .tab-content { display: none; padding: 30px 30px 40px 80px; position: relative; z-index: 1; }
   .tab-content.active { display: block; animation: fadeIn 0.3s; }
@@ -103,6 +105,14 @@
   .hl-green { color: var(--correct-green); font-weight: bold; }
   .hl-purple { color: var(--accent-purple); font-weight: bold; }
 
+  /* Гугл форма */
+  .google-form-container {
+    width: 100%; height: 800px; background: var(--card-bg); border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 20px;
+    border: 1px solid var(--card-border);
+  }
+  .google-form-container iframe { width: 100%; height: 100%; border: none; display: block; }
+
   @media (max-width: 768px) {
     .container::before { left: 15px; }
     .tab-content { padding: 20px 20px 20px 30px; }
@@ -123,6 +133,7 @@
     <button type="button" class="tab-btn" onclick="window.openTab('task1', this)" ontouchstart="">📝 Алгоритм 1</button>
     <button type="button" class="tab-btn" onclick="window.openTab('task2', this)" ontouchstart="">📝 Алгоритм 2</button>
     <button type="button" class="tab-btn" onclick="window.openTab('task3', this)" ontouchstart="">📝 Алгоритм 3</button>
+    <button type="button" class="tab-btn hw-tab" onclick="window.openTab('hw', this)" ontouchstart="">🎯 Домашнє завдання</button>
   </div>
 
   <!-- Вкладка 1: Теорія та Пастки -->
@@ -304,6 +315,19 @@
     </div>
   </div>
 
+  <!-- Вкладка 5: Домашнє завдання -->
+  <div id="hw" class="tab-content">
+    <div class="theory-card" style="border-left-color: #e67e22;">
+      <h3 style="margin-top:0; color: #e67e22;">🎯 Домашнє завдання</h3>
+      <p>Заповніть форму нижче. Якщо забули, як розв'язувати — підглядайте у вкладки з алгоритмами! <em>(Після відправки ви отримаєте посилання на детальний розбір завдань)</em></p>
+    </div>
+    
+    <div class="google-form-container">
+      <!-- УВАГА: ВСТАВ СВОЄ ПОСИЛАННЯ НА ГУГЛ ФОРМУ В src="..." -->
+      <iframe src="https://forms.gle/5Rg7rXGNWwi8cHZCA" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Завантаження…</iframe>
+    </div>
+  </div>
+
 </div>
 
 <!-- ЗАВАНТАЖЕННЯ СКРИПТІВ В САМОМУ КІНЦІ BODY (ДЛЯ iOS TELEGRAM) -->
@@ -368,11 +392,8 @@
   }
 
   // 2. СТРАХУВАЛЬНИЙ ЗАПУСК КАТЕХ ДЛЯ iOS
-  // Запускаємо одразу, якщо DOM готовий
   document.addEventListener("DOMContentLoaded", renderFormulas);
-  // На випадок якщо DOMContentLoaded не спрацював через WebView
   window.addEventListener("load", renderFormulas);
-  // Грубий таймер для повільних пристроїв
   setTimeout(renderFormulas, 300);
   setTimeout(renderFormulas, 1000);
 </script>
